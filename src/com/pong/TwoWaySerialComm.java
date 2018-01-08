@@ -67,21 +67,6 @@ public class TwoWaySerialComm
                 String temp="";
                 while ( ( len = this.in.read(buffer)) > -1 )
                 {
-                    /*
-                    String num="";
-                    boolean count=false;
-                    for(byte buffbyte : buffer){
-                        if((char)buffbyte == '\n' && num.isEmpty()){
-                            count=true;
-                        }
-                        if((char)buffbyte == '\n' && !num.isEmpty()){
-                            System.out.println(num);break;
-                        }
-                        if((char)buffbyte!='\n' && count){
-                            num+=(char)buffbyte;
-                        }
-
-                    }*/
                     if(temp.length()<10){
                         temp+= new String(buffer,0,len);
 
