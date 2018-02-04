@@ -1,5 +1,6 @@
 package com.pong;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -50,9 +51,6 @@ public class Surface extends JPanel implements ActionListener {
         y=Math.max(0,y);
         y = Math.min(y, getHeight() - 50);
 
-
-        int w = getWidth();
-        int h = getHeight();
 
 
     }
