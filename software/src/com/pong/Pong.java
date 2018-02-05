@@ -23,6 +23,7 @@ public class Pong extends JFrame {
 
         surface.setStartingPoint(height/2);*/
         surface = new MenuSurface();
+        addKeyListener(surface);
         add(surface);
         addWindowListener(new WindowAdapter() {
             @Override

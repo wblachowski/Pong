@@ -4,15 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-public class MenuSurface extends JPanel implements Runnable {
+public class MenuSurface extends JPanel implements Runnable, KeyListener {
 
     String title = "PONG";
     String[] options = new String[]{"New game", "Settings", "Quit"};
 
     private Thread animator;
+    private int state=0;
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -33,17 +36,12 @@ public class MenuSurface extends JPanel implements Runnable {
         g.setFont(font);
         for (int i = 0; i < options.length; i++) {
             Rectangle2D stringBounds = font.getStringBounds(options[i], frc);
-            Point mousePosition = getMousePosition();
-            int x = (int) (getWidth() / 2 - stringBounds.getWidth()/2);
-            int y = 200+i*60;
-            if (mousePosition!= null && mousePosition.getX()>=x && mousePosition.getX()<=stringBounds.getWidth()+x
-                    && mousePosition.getY()<=y && mousePosition.getY()>=y-stringBounds.getHeight()
-                    ){
+            if (state==i){
                 g.setColor(Color.yellow);
             } else {
                 g.setColor(Color.white);
             }
-            g.drawString(options[i], x, y);
+            g.drawString(options[i], (int) (getWidth() / 2 - stringBounds.getWidth()/2), 200+i*60);
         }
     }
 
@@ -88,5 +86,29 @@ public class MenuSurface extends JPanel implements Runnable {
 
             beforeTime = System.currentTimeMillis();
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyChar()) {
+            case 's':
+                state++;
+                state = state % 3;
+                break;
+            case 'w':
+                state--;
+                if (state < 0) state = 2;
+                break;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
