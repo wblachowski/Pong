@@ -43,21 +43,18 @@ void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
   Wire.write(Data);
   Wire.endTransmission();
 }
+
 float angle;
 int readAngle(){
   uint8_t Buf[14];
   I2Cread(MPU9250_ADDRESS,0x3B,14,Buf);
   
   // Accelerometer
-  int16_t ax=-(Buf[0]<<8 | Buf[1]);
   int16_t ay=-(Buf[2]<<8 | Buf[3]);
-  int16_t az=Buf[4]<<8 | Buf[5];
 
   // Gyroscope
   int16_t gx=-(Buf[8]<<8 | Buf[9]);
-  int16_t gy=-(Buf[10]<<8 | Buf[11]);
-  int16_t gz=Buf[12]<<8 | Buf[13];
-  
+
   float a = float(ay)/131.0;
   float b = float(gx)/182.0;
   float dtC = 0.010;
@@ -65,6 +62,19 @@ int readAngle(){
   float A=tau/(tau+dtC);
   angle=A*(angle+b*0.02)+(1-A)*a;
   return angle;
+}
+
+int buttons[]={8,7,6};
+int latest[]={0,0,0};
+void readButtons(){
+  for(int i=0;i<3;i++){
+    int current = digitalRead(buttons[i]);
+    if(latest[i]==0 && current==1){
+      Serial.print("WCISK:");
+      Serial.println(buttons[i]);
+    }
+    latest[i]=current;
+  }
 }
 
 float initAngle=0;
@@ -97,7 +107,9 @@ void setup()
     delay(1);
   }
   initAngle = sumAngle/100;
-  pinMode(PD6, INPUT);
+  for(int i=0;i<3;i++){
+    pinMode(buttons[i],INPUT);
+  }
   pinMode(R,OUTPUT);
   pinMode(G,OUTPUT);
   pinMode(B,OUTPUT);
@@ -108,7 +120,6 @@ void setup()
 
 long int cpt=0;
 // Main loop, read and display data
-int latest=0;
 bool blocked=false;
 int block_time=0;
 void loop()
@@ -125,10 +136,7 @@ void loop()
   Serial.println((int)readAngle());
   if(blocked && millis()-block_time>500){blocked=false;analogWrite(R,255);analogWrite(G,255);}
   if(!blocked)analogWrite(B,max(0,255-abs(angle)*2));
-  int current = digitalRead(PD6);
-  if(latest==0 && current==1){
-    Serial.println("WCISK");
-  }
-  latest=current;
+
+  readButtons();
   delay(10);    
 }
