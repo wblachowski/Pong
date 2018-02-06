@@ -45,6 +45,27 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    public void processKey(char keyChar){
+        switch(keyChar) {
+            case 's':
+                state++;
+                state = state % 3;
+                break;
+            case 'w':
+                state--;
+                if (state < 0) state = 2;
+                break;
+            case 'x':
+                selectMenuItem();
+                break;
+        }
+
+    }
+
+    public void selectMenuItem(){
+        Pong.getInstance().startNewGame();
+    }
+
     @Override
     public void addNotify() {
         super.addNotify();
@@ -95,16 +116,7 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyChar()) {
-            case 's':
-                state++;
-                state = state % 3;
-                break;
-            case 'w':
-                state--;
-                if (state < 0) state = 2;
-                break;
-        }
+        processKey(e.getKeyChar());
     }
 
     @Override

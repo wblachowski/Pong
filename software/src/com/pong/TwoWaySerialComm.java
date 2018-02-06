@@ -4,16 +4,14 @@ import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Scanner;
 
 public class TwoWaySerialComm
 {
-    Surface.Velocity velocity;
-    public TwoWaySerialComm(Surface.Velocity velocity)
+    GameSurface.Velocity velocity;
+    public TwoWaySerialComm(GameSurface.Velocity velocity)
     {
         super();
         this.velocity = velocity;
@@ -51,8 +49,8 @@ public class TwoWaySerialComm
     public static class SerialReader implements Runnable
     {
         InputStream in;
-        Surface.Velocity velocity;
-        public SerialReader (InputStream in, Surface.Velocity velocity)
+        GameSurface.Velocity velocity;
+        public SerialReader (InputStream in, GameSurface.Velocity velocity)
         {
             this.in = in;
             this.velocity=velocity;
