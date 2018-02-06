@@ -64,10 +64,10 @@ int readAngle(){
   return angle;
 }
 
-int buttons[]={8,7,6,5,4};
-int latest[]={0,0,0,0,0};
+int buttons[]={8,7,6,5,4,3};
+int latest[]={0,0,0,0,0,0};
 void readButtons(){
-  for(int i=0;i<5;i++){
+  for(int i=0;i<(sizeof(buttons)/sizeof(*buttons));i++){
     int current = digitalRead(buttons[i]);
     if(latest[i]==0 && current==1){
       Serial.print("WCISK:");
@@ -107,7 +107,7 @@ void setup()
     delay(1);
   }
   initAngle = sumAngle/100;
-  for(int i=0;i<5;i++){
+  for(int i=0;i<(sizeof(buttons)/sizeof(*buttons));i++){
     pinMode(buttons[i],INPUT);
   }
   pinMode(R,OUTPUT);
