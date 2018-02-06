@@ -34,7 +34,7 @@ public class Pong extends JFrame {
         menuSurface = new MenuSurface();
         addKeyListener(menuSurface);
 
-        gameSurface = new GameSurface();
+        gameSurface = new GameSurface(width,height);
 
         contentPane.add(menuSurface,"Menu");
         contentPane.add(gameSurface,"Game");
@@ -49,7 +49,7 @@ public class Pong extends JFrame {
 
         setContentPane(contentPane);
         setTitle("Pong");
-        setSize(width, height);
+        setSize(width,height);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
