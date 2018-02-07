@@ -31,7 +31,7 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
         g.setColor(Color.white);
 
         g.drawString(title, getWidth() / 2 - (int) font.getStringBounds(title, frc).getWidth() / 2, 100);
-        
+
         for (int i = 0; i < options.length; i++) {
             if (state == i) {
                 font = new Font("arial", Font.BOLD, 38);
@@ -64,7 +64,7 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
     }
 
     public void selectMenuItem() {
-        Pong.getInstance().startNewGame();
+        Pong.getInstance().showNewGame();
     }
 
     @Override

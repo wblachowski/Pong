@@ -24,7 +24,7 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
     private int scoreA;
     private int scoreB;
 
-    public GameSurface(int width, int height) {
+    public GameSurface() {
         vel.value = 0;
         barA = new Bar(0.5, 20, 80);
         barB = new Bar(0.5, 20, 80);
@@ -125,6 +125,9 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
             barB.setPosition(Math.max(0.0, barB.getPosition() - 0.01));
         } else if (e.getKeyChar() == 'k') {
             barB.setPosition(Math.min(1.0, barB.getPosition() + 0.01));
+        }
+        if(e.getKeyChar()=='y'){
+            Pong.getInstance().showMenu();
         }
     }
 
