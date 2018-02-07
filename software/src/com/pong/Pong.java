@@ -25,7 +25,7 @@ public class Pong extends JFrame {
 
     private void initUI() {
         final int width = 800;
-        final int height = 600;
+        final int height = 550;
 
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new CardLayout());
