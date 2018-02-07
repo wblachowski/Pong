@@ -21,6 +21,7 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
 
     Bar barA;
     Bar barB;
+    Ball ball;
     private int scoreA;
     private int scoreB;
 
@@ -28,6 +29,7 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         vel.value = 0;
         barA = new Bar(0.5, 20, 80);
         barB = new Bar(0.5, 20, 80);
+        ball = new Ball(20);
         scoreA = 0;
         scoreB = 0;
 
@@ -47,7 +49,7 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
         drawBars(g2d);
-
+        drawBall(g2d);
         drawScore(g2d);
         drawSeparator(g2d);
     }
@@ -56,6 +58,47 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         g2d.setPaint(Color.white);
         g2d.fillRect(20, (int) (barA.getPosition() * ((double) getHeight() - barA.getHeight())), barA.getWidth(), barA.getHeight());
         g2d.fillRect(getWidth() - barB.getWidth() - 20, (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight())), barB.getWidth(), barB.getHeight());
+    }
+
+    private void drawBall(Graphics2D g2d) {
+        g2d.setPaint(Color.white);
+        //x i y jako srodek kulki
+        int x = (int) (ball.getPositionX() * (double) getWidth());
+        int y = (int) (ball.getPositionY() * (double) getHeight());
+
+        g2d.fillOval(x - ball.getSize() / 2, y - ball.getSize() / 2, ball.getSize(), ball.getSize());
+
+        int yBarA = (int) (barA.getPosition() * ((double) getHeight() - barA.getHeight()));
+        int yBarB = (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight()));
+
+        //CHECK LEFT SIDE
+        if (x <= 20 + barA.getWidth() + ball.getSize() / 2 && y + ball.getSize() / 2 >= yBarA && y - ball.getSize() / 2 <= yBarA + barA.getHeight()) {
+            ball.setVelocityX(ball.getVelocityX() * -1);
+        }
+        if (x <= 0 - ball.getSize()) {
+            scoreB++;
+            ball = new Ball(ball.getSize());
+        }
+
+        //CHECK RIGHT SIDE
+        if (x >= getWidth() - barA.getWidth() - 20 - ball.getSize() / 2 && y + ball.getSize() / 2 >= yBarB && y - ball.getSize() / 2 <= yBarB + barB.getHeight()) {
+            ball.setVelocityX(ball.getVelocityX() * -1);
+        }
+        if (x >= getWidth() + ball.getSize()) {
+            scoreA++;
+            ball = new Ball(ball.getSize());
+        }
+
+        //CHECK TOP
+        if (y <= ball.getSize()/2) {
+            ball.setVelocityY(ball.getVelocityY() * -1);
+        }
+        //CHECK BOTTOM
+        if (y >= getHeight() - ball.getSize()/2) {
+            ball.setVelocityY(ball.getVelocityY() * -1);
+        }
+
+        ball.updatePosition();
     }
 
     private void drawScore(Graphics2D g2d) {
@@ -126,7 +169,7 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         } else if (e.getKeyChar() == 'k') {
             barB.setPosition(Math.min(1.0, barB.getPosition() + 0.01));
         }
-        if(e.getKeyChar()=='y'){
+        if (e.getKeyChar() == 'y') {
             Pong.getInstance().showMenu();
         }
     }
@@ -173,7 +216,52 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
     }
 
     private class Ball {
+        int size;
+        double positionX;
+        double positionY;
+        double velocityX;
+        double velocityY;
 
+        public Ball(int size) {
+            this.size = size;
+            positionX = 0.5;
+            positionY = 0.5;
+            this.velocityX = (Math.random() - 0.5) / 100;
+            this.velocityY = (Math.random() - 0.5) / 200;
+        }
+
+        public void updatePosition() {
+            positionX += velocityX;
+            positionY += velocityY;
+        }
+
+        public double getPositionX() {
+            return positionX;
+        }
+
+        public double getPositionY() {
+            return positionY;
+        }
+
+        public double getVelocityX() {
+            return velocityX;
+        }
+
+        public double getVelocityY() {
+            return velocityY;
+        }
+
+        public void setVelocityX(double velocityX) {
+            this.velocityX = velocityX;
+        }
+
+        public void setVelocityY(double velocityY) {
+            this.velocityY = velocityY;
+        }
+
+        public int getSize() {
+            return size;
+        }
     }
 
 }
