@@ -72,20 +72,37 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         int yBarB = (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight()));
 
         //CHECK LEFT SIDE
-        if (x <= 20 + barA.getWidth() + ball.getSize() / 2 && y + ball.getSize() / 2 >= yBarA && y - ball.getSize() / 2 <= yBarA + barA.getHeight()) {
-            ball.setVelocityX(ball.getVelocityX() * -1);
+        if (x>=18 && x <= 20 + barA.getWidth() + ball.getSize() / 2 && y + ball.getSize() / 2 >= yBarA && y - ball.getSize() / 2 <= yBarA + barA.getHeight()) {
+            int barCenter=yBarA+barA.getHeight()/2;
+            double hitPoint=(double)(barCenter-y)/(double)(barA.getHeight()/2);
+            hitPoint=Math.min(hitPoint,1.0);
+            hitPoint=Math.max(hitPoint,-1.0);
+            double bounceAngle = hitPoint*5*Math.PI/12;
+            ball.setVelocityY(ball.MAX_VELOCITY*(-1)*Math.sin(bounceAngle));
+            ball.setVelocityX(ball.MAX_VELOCITY*Math.cos(bounceAngle));
         }
         if (x <= 0 - ball.getSize()) {
             scoreB++;
+            barA.setPosition(0.5);
+            barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
         }
 
         //CHECK RIGHT SIDE
-        if (x >= getWidth() - barA.getWidth() - 20 - ball.getSize() / 2 && y + ball.getSize() / 2 >= yBarB && y - ball.getSize() / 2 <= yBarB + barB.getHeight()) {
-            ball.setVelocityX(ball.getVelocityX() * -1);
+        if (x >= getWidth() - barA.getWidth() - 20 - ball.getSize() / 2 && x<=getWidth()-barA.getWidth()-18
+                && y + ball.getSize() / 2 >= yBarB && y - ball.getSize() / 2 <= yBarB + barB.getHeight()) {
+            int barCenter=yBarB+barB.getHeight()/2;
+            double hitPoint=(double)(barCenter-y)/(double)(barB.getHeight()/2);
+            hitPoint=Math.min(hitPoint,1.0);
+            hitPoint=Math.max(hitPoint,-1.0);
+            double bounceAngle = hitPoint*5*Math.PI/12;
+            ball.setVelocityY(ball.MAX_VELOCITY*(-1)*Math.sin(bounceAngle));
+            ball.setVelocityX(ball.MAX_VELOCITY*(-1)*Math.cos(bounceAngle));
         }
         if (x >= getWidth() + ball.getSize()) {
             scoreA++;
+            barA.setPosition(0.5);
+            barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
         }
 
@@ -158,7 +175,6 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Game clicked: " + e.getKeyChar());
         if (e.getKeyChar() == 'w') {
             barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
         } else if (e.getKeyChar() == 's') {
@@ -222,12 +238,15 @@ public class GameSurface extends JPanel implements Runnable, KeyListener {
         double velocityX;
         double velocityY;
 
+        double MAX_VELOCITY=0.005;
+
         public Ball(int size) {
             this.size = size;
             positionX = 0.5;
             positionY = 0.5;
-            this.velocityX = (Math.random() - 0.5) / 100;
-            this.velocityY = (Math.random() - 0.5) / 200;
+            velocityX=MAX_VELOCITY;
+            if(Math.random()<0.5)velocityX*=-1;
+            velocityY = (Math.random() - 0.5) *MAX_VELOCITY/5;
         }
 
         public void updatePosition() {
