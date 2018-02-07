@@ -15,7 +15,7 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
     String[] options = new String[]{"New game", "Settings", "Quit"};
 
     private Thread animator;
-    private int state=0;
+    private int state = 0;
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -31,22 +31,23 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
         g.setColor(Color.white);
 
         g.drawString(title, getWidth() / 2 - (int) font.getStringBounds(title, frc).getWidth() / 2, 100);
-
-        font = new Font("arial", Font.BOLD, 35);
-        g.setFont(font);
+        
         for (int i = 0; i < options.length; i++) {
-            Rectangle2D stringBounds = font.getStringBounds(options[i], frc);
-            if (state==i){
+            if (state == i) {
+                font = new Font("arial", Font.BOLD, 38);
                 g.setColor(Color.yellow);
             } else {
+                font = new Font("arial", Font.BOLD, 35);
                 g.setColor(Color.white);
             }
-            g.drawString(options[i], (int) (getWidth() / 2 - stringBounds.getWidth()/2), 200+i*60);
+            g.setFont(font);
+            Rectangle2D stringBounds = font.getStringBounds(options[i], frc);
+            g.drawString(options[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
         }
     }
 
-    public void processKey(char keyChar){
-        switch(keyChar) {
+    public void processKey(char keyChar) {
+        switch (keyChar) {
             case 's':
                 state++;
                 state = state % 3;
@@ -56,13 +57,13 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
                 if (state < 0) state = 2;
                 break;
             case 'x':
-                selectMenuItem();
+                if (state == 0) selectMenuItem();
                 break;
         }
 
     }
 
-    public void selectMenuItem(){
+    public void selectMenuItem() {
         Pong.getInstance().startNewGame();
     }
 
