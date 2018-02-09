@@ -49,21 +49,22 @@ public class MenuSurface extends JPanel implements KeyListener {
         switch (keyChar) {
             case 's':
                 state++;
-                state = state % 3;
+                state = state % options.length;
                 break;
             case 'w':
                 state--;
-                if (state < 0) state = 2;
+                if (state < 0) state = options.length-1;
                 break;
             case 'x':
-                if (state == 0) selectMenuItem();
+                selectMenuItem();
                 break;
         }
 
     }
 
     public void selectMenuItem() {
-        Pong.getInstance().showNewGame();
+        if(state==0)Pong.getInstance().showNewGame();
+        else if(state==1)Pong.getInstance().showSettings();
     }
 
     @Override

@@ -12,7 +12,8 @@ public class Pong extends JFrame implements Runnable{
     Thread animator;
     MenuSurface menuSurface;
     GameSurface gameSurface;
-    
+    SettingsSurface settingsSurface;
+
     public static Pong getInstance(){
         if(instance==null){
             instance=new Pong();
@@ -80,6 +81,17 @@ public class Pong extends JFrame implements Runnable{
         cardLayout.show(getContentPane(),"Menu");
         removeKeyListener(gameSurface);
         addKeyListener(menuSurface);
+    }
+
+    public void showSettings(){
+        CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
+        if(settingsSurface==null){
+            settingsSurface=new SettingsSurface();
+        }
+        getContentPane().add(settingsSurface,"Settings");
+        cardLayout.show(getContentPane(),"Settings");
+        removeKeyListener(menuSurface);
+        addKeyListener(settingsSurface);
     }
 
     @Override
