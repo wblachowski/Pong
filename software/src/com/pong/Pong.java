@@ -6,10 +6,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Pong extends JFrame {
+public class Pong extends JFrame implements Runnable{
 
     private static Pong instance;
-
+    Thread animator;
+    MenuSurface menuSurface;
+    GameSurface gameSurface;
+    
     public static Pong getInstance(){
         if(instance==null){
             instance=new Pong();
@@ -20,8 +23,16 @@ public class Pong extends JFrame {
     private Pong() {
     }
 
-    MenuSurface menuSurface;
-    GameSurface gameSurface;
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Pong pong = Pong.getInstance();
+                pong.initUI();
+                pong.setVisible(true);
+            }
+        });
+    }
 
     private void initUI() {
         final int width = 800;
@@ -33,7 +44,6 @@ public class Pong extends JFrame {
 
         menuSurface = new MenuSurface();
         addKeyListener(menuSurface);
-
         gameSurface = new GameSurface();
 
         contentPane.add(menuSurface,"Menu");
@@ -52,6 +62,8 @@ public class Pong extends JFrame {
         setSize(width,height);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        animator = new Thread(this);
+        animator.start();
     }
 
     public void showNewGame(){
@@ -70,15 +82,30 @@ public class Pong extends JFrame {
         addKeyListener(menuSurface);
     }
 
+    @Override
+    public void run() {
+        long beforeTime, timeDiff, sleep;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Pong pong = Pong.getInstance();
-                pong.initUI();
-                pong.setVisible(true);
+        beforeTime = System.currentTimeMillis();
+
+        while (true) {
+
+            repaint();
+
+            timeDiff = System.currentTimeMillis() - beforeTime;
+            sleep = 10 - timeDiff;
+
+            if (sleep < 0) {
+                sleep = 2;
             }
-        });
+
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted: " + e.getMessage());
+            }
+
+            beforeTime = System.currentTimeMillis();
+        }
     }
 }

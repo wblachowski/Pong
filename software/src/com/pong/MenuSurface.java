@@ -9,12 +9,11 @@ import java.awt.event.KeyListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-public class MenuSurface extends JPanel implements Runnable, KeyListener {
+public class MenuSurface extends JPanel implements KeyListener {
 
     String title = "PONG";
     String[] options = new String[]{"New game", "Settings", "Quit"};
 
-    private Thread animator;
     private int state = 0;
 
     private void doDrawing(Graphics g) {
@@ -68,46 +67,10 @@ public class MenuSurface extends JPanel implements Runnable, KeyListener {
     }
 
     @Override
-    public void addNotify() {
-        super.addNotify();
-
-        animator = new Thread(this);
-        animator.start();
-    }
-
-    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         doDrawing(g);
-    }
-
-    @Override
-    public void run() {
-
-        long beforeTime, timeDiff, sleep;
-
-        beforeTime = System.currentTimeMillis();
-
-        while (true) {
-
-            repaint();
-
-            timeDiff = System.currentTimeMillis() - beforeTime;
-            sleep = 10 - timeDiff;
-
-            if (sleep < 0) {
-                sleep = 2;
-            }
-
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                System.out.println("Interrupted: " + e.getMessage());
-            }
-
-            beforeTime = System.currentTimeMillis();
-        }
     }
 
     @Override
