@@ -12,10 +12,10 @@ import java.awt.font.FontRenderContext;
 public class GameSurface extends JPanel implements KeyListener {
 
     public static class Velocity {
-        public int value;
+        public double value;
     }
 
-    public Velocity vel = new Velocity();
+    static int SENSITIVITY=5;
 
     Bar barA;
     Bar barB;
@@ -24,16 +24,12 @@ public class GameSurface extends JPanel implements KeyListener {
     private int scoreB;
 
     public GameSurface() {
-        vel.value = 0;
-        barA = new Bar(0.5, 20, 80);
-        barB = new Bar(0.5, 20, 80);
+        barA = new Bar(0.5, 20, 80,SENSITIVITY);
+        barB = new Bar(0.5, 20, 80,SENSITIVITY);
         ball = new Ball(20);
         scoreA = 0;
         scoreB = 0;
-        try {
-            //(new TwoWaySerialComm(vel)).connect("COM4");
-        } catch (Exception ex) {
-        }
+        Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
     }
 
 
@@ -55,6 +51,8 @@ public class GameSurface extends JPanel implements KeyListener {
         g2d.setPaint(Color.white);
         g2d.fillRect(20, (int) (barA.getPosition() * ((double) getHeight() - barA.getHeight())), barA.getWidth(), barA.getHeight());
         g2d.fillRect(getWidth() - barB.getWidth() - 20, (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight())), barB.getWidth(), barB.getHeight());
+
+        barA.updatePosition();
     }
 
     private void drawBall(Graphics2D g2d) {
@@ -137,11 +135,11 @@ public class GameSurface extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyChar() == 'w') {
+        /*if (e.getKeyChar() == 'w') {
             barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
-        } else if (e.getKeyChar() == 's') {
+        } if (e.getKeyChar() == 's') {
             barA.setPosition(Math.min(1.0, barA.getPosition() + 0.01));
-        }
+        }*/
         if (e.getKeyChar() == 'i') {
             barB.setPosition(Math.max(0.0, barB.getPosition() - 0.01));
         } else if (e.getKeyChar() == 'k') {
@@ -164,15 +162,20 @@ public class GameSurface extends JPanel implements KeyListener {
         doDrawing(g);
     }
 
-    private class Bar {
+    public class Bar {
         private double position;
         private int height;
         private int width;
+        private double sensitivity;
+        public Velocity velocity;
 
-        public Bar(double initalY, int width, int height) {
+        public Bar(double initalY, int width, int height,int sensitivity) {
             this.position = initalY;
             this.height = height;
             this.width = width;
+            this.velocity=new Velocity();
+            this.velocity.value=0;
+            this.sensitivity=sensitivity;
         }
 
 
@@ -190,6 +193,12 @@ public class GameSurface extends JPanel implements KeyListener {
 
         public int getWidth() {
             return width;
+        }
+
+        public void updatePosition(){
+            if(velocity.value<-5 || velocity.value>5)position+=velocity.value*sensitivity/10000;
+            position=Math.max(0,position);
+            position=Math.min(1.0,position);
         }
     }
 

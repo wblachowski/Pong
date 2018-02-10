@@ -65,13 +65,13 @@ int readAngle(){
 }
 
 int buttons[]={8,7,6,5,4,3};
+char buttons_chars[]={'W','S','A','D','Y','X'};
 int latest[]={0,0,0,0,0,0};
 void readButtons(){
   for(int i=0;i<(sizeof(buttons)/sizeof(*buttons));i++){
     int current = digitalRead(buttons[i]);
     if(latest[i]==0 && current==1){
-      Serial.print("WCISK:");
-      Serial.println(buttons[i]);
+      Serial.println(buttons_chars[i]);
     }
     latest[i]=current;
   }
@@ -79,9 +79,9 @@ void readButtons(){
 
 float initAngle=0;
 // Initializations
-int R=9;
+int B=9;
 int G=10;
-int B=11;
+int R=11;
 void setup()
 {
   // Arduino initializations
@@ -130,12 +130,12 @@ void loop()
     Serial.print("I received: ");
     Serial.println(incomingByte, DEC);
     if(incomingByte==48 || incomingByte==49){blocked=true;block_time=millis();}
-    if(incomingByte==48){analogWrite(R,0);analogWrite(G,255);analogWrite(B,255);}
-    if(incomingByte==49){analogWrite(R,255);analogWrite(G,0);analogWrite(B,255);}
+    if(incomingByte==48){analogWrite(R,210);analogWrite(G,255);analogWrite(B,255);}
+    if(incomingByte==49){analogWrite(R,255);analogWrite(G,210);analogWrite(B,255);}
   }
   Serial.println((int)readAngle());
   if(blocked && millis()-block_time>500){blocked=false;analogWrite(R,255);analogWrite(G,255);}
-  if(!blocked)analogWrite(B,max(0,255-abs(angle)*2));
+  if(!blocked)analogWrite(B,max(0,255-abs(angle)));
 
   readButtons();
   delay(10);    

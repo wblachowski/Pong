@@ -5,14 +5,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import com.pong.TwoWaySerialComm;
 
 public class Pong extends JFrame implements Runnable{
 
     private static Pong instance;
     Thread animator;
+
     MenuSurface menuSurface;
     GameSurface gameSurface;
     SettingsSurface settingsSurface;
+
+    TwoWaySerialComm connectionA;
+    TwoWaySerialComm connectionB;
 
     public static Pong getInstance(){
         if(instance==null){
@@ -29,6 +34,7 @@ public class Pong extends JFrame implements Runnable{
             @Override
             public void run() {
                 Pong pong = Pong.getInstance();
+                pong.initConnection();
                 pong.initUI();
                 pong.setVisible(true);
             }
@@ -45,10 +51,8 @@ public class Pong extends JFrame implements Runnable{
 
         menuSurface = new MenuSurface();
         addKeyListener(menuSurface);
-        gameSurface = new GameSurface();
 
         contentPane.add(menuSurface,"Menu");
-        contentPane.add(gameSurface,"Game");
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.first(contentPane);
 
@@ -65,6 +69,17 @@ public class Pong extends JFrame implements Runnable{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         animator = new Thread(this);
         animator.start();
+    }
+
+    private void initConnection(){
+        try {
+            connectionA = new TwoWaySerialComm();
+            connectionA.connect("COM5", "COM6");
+            //connectionB = new TwoWaySerialComm();
+            //connectionB.connect("COM3", "COM4");
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
     public void showNewGame(){
@@ -119,5 +134,13 @@ public class Pong extends JFrame implements Runnable{
 
             beforeTime = System.currentTimeMillis();
         }
+    }
+
+    public TwoWaySerialComm getConnectionA(){
+        return connectionA;
+    }
+
+    public TwoWaySerialComm getConnectionB() {
+        return connectionB;
     }
 }
