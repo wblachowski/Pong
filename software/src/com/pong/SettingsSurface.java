@@ -46,9 +46,8 @@ public class SettingsSurface extends JPanel implements KeyListener {
                 g.setColor(Color.white);
             }
             g.setFont(font);
-            Rectangle2D stringBounds = font.getStringBounds(options[i], frc);
-            g.drawString(options[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
-            g.drawString(values[i],(int) (getWidth() / 2 + stringBounds.getWidth() / 2)+50,200+i*60);
+            Rectangle2D stringBounds = font.getStringBounds(options[i]+"   "+values[i], frc);
+            g.drawString(options[i]+"   "+values[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
         }
 
     }

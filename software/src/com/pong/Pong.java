@@ -43,7 +43,7 @@ public class Pong extends JFrame implements Runnable {
             @Override
             public void run() {
                 Pong pong = Pong.getInstance();
-               // pong.initConnection();
+                pong.initConnection();
                 pong.initUI();
                 pong.setVisible(true);
             }
