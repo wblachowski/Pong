@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 public class MenuSurface extends JPanel implements KeyListener {
 
     String title = "PONG";
-    String[] options = new String[]{"New game", "Settings", "Quit"};
+    String[] options = new String[]{"New game", "Settings", "Exit"};
 
     private int state = 0;
 
@@ -65,6 +65,7 @@ public class MenuSurface extends JPanel implements KeyListener {
     public void selectMenuItem() {
         if(state==0)Pong.getInstance().showNewGame();
         else if(state==1)Pong.getInstance().showSettings();
+        else if(state==2)System.exit(0);
     }
 
     @Override

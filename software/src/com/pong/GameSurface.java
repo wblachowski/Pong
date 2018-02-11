@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 
 public class GameSurface extends JPanel implements KeyListener {
 
@@ -15,22 +16,26 @@ public class GameSurface extends JPanel implements KeyListener {
         public double value;
     }
 
-    static int SENSITIVITY=5;
+    static int SENSITIVITY = 5;
 
+    private int state = 0; //0-playing
     Bar barA;
     Bar barB;
     Ball ball;
     private int scoreA;
     private int scoreB;
 
+    String pauseTitle="Game paused";
+    String pauseOptions[]={"Resume","New game","Exit"};
+
     public GameSurface() {
-        barA = new Bar(0.5, 20, 80,SENSITIVITY);
-        barB = new Bar(0.5, 20, 80,SENSITIVITY);
+        barA = new Bar(0.5, 20, 80, SENSITIVITY);
+        barB = new Bar(0.5, 20, 80, SENSITIVITY);
         ball = new Ball(20);
         scoreA = 0;
         scoreB = 0;
-        if(Pong.getInstance().getConnectionA()!=null)Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
-        if(Pong.getInstance().getConnectionB()!=null)Pong.getInstance().getConnectionB().setVelocity(barB.velocity);
+        if (Pong.getInstance().getConnectionA() != null) Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
+        if (Pong.getInstance().getConnectionB() != null) Pong.getInstance().getConnectionB().setVelocity(barB.velocity);
     }
 
 
@@ -46,15 +51,24 @@ public class GameSurface extends JPanel implements KeyListener {
         drawBall(g2d);
         drawScore(g2d);
         drawSeparator(g2d);
+
+        if (state != 0) {
+            drawPauseMenu(g2d);
+        }
+    }
+
+    private void updateElementsPosition() {
+        if (state == 0) {
+            barA.updatePosition();
+            barB.updatePosition();
+            ball.updatePosition();
+        }
     }
 
     private void drawBars(Graphics2D g2d) {
         g2d.setPaint(Color.white);
         g2d.fillRect(20, (int) (barA.getPosition() * ((double) getHeight() - barA.getHeight())), barA.getWidth(), barA.getHeight());
         g2d.fillRect(getWidth() - barB.getWidth() - 20, (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight())), barB.getWidth(), barB.getHeight());
-
-        barA.updatePosition();
-        barB.updatePosition();
     }
 
     private void drawBall(Graphics2D g2d) {
@@ -80,8 +94,12 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x <= 0 - ball.getSize()) {
             scoreB++;
-            if(Pong.getInstance().getConnectionA()!=null){Pong.getInstance().getConnectionA().write('0');}
-            if(Pong.getInstance().getConnectionB()!=null){Pong.getInstance().getConnectionB().write('1');}
+            if (Pong.getInstance().getConnectionA() != null) {
+                Pong.getInstance().getConnectionA().write('0');
+            }
+            if (Pong.getInstance().getConnectionB() != null) {
+                Pong.getInstance().getConnectionB().write('1');
+            }
             barA.setPosition(0.5);
             barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
@@ -100,8 +118,12 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x >= getWidth() + ball.getSize()) {
             scoreA++;
-            if(Pong.getInstance().getConnectionA()!=null){Pong.getInstance().getConnectionA().write('1');}
-            if(Pong.getInstance().getConnectionB()!=null){Pong.getInstance().getConnectionB().write('0');}
+            if (Pong.getInstance().getConnectionA() != null) {
+                Pong.getInstance().getConnectionA().write('1');
+            }
+            if (Pong.getInstance().getConnectionB() != null) {
+                Pong.getInstance().getConnectionB().write('0');
+            }
             barA.setPosition(0.5);
             barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
@@ -115,8 +137,6 @@ public class GameSurface extends JPanel implements KeyListener {
         if (y >= getHeight() - ball.getSize() / 2) {
             ball.setVelocityY(ball.getVelocityY() * -1);
         }
-
-        ball.updatePosition();
     }
 
     private void drawScore(Graphics2D g2d) {
@@ -134,6 +154,31 @@ public class GameSurface extends JPanel implements KeyListener {
         g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
     }
 
+    private void drawPauseMenu(Graphics2D g2d) {
+        Color blackWithOpacity = new Color(0, 0, 0, 0.9f);
+        g2d.setColor(blackWithOpacity);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        FontRenderContext frc = new FontRenderContext(null, true, true);
+        Font font = new Font("arial", Font.BOLD, 50);
+        g2d.setFont(font);
+        g2d.setColor(Color.white);
+        g2d.drawString(pauseTitle, getWidth() / 2 - (int) font.getStringBounds(pauseTitle, frc).getWidth() / 2, 100);
+
+        for (int i = 0; i < pauseOptions.length; i++) {
+            if (state-10 == i) {
+                font = new Font("arial", Font.BOLD, 38);
+                g2d.setColor(Color.yellow);
+            } else {
+                font = new Font("arial", Font.BOLD, 35);
+                g2d.setColor(Color.white);
+            }
+            g2d.setFont(font);
+            Rectangle2D stringBounds = font.getStringBounds(pauseOptions[i], frc);
+            g2d.drawString(pauseOptions[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
+        }
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -141,18 +186,34 @@ public class GameSurface extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        /*if (e.getKeyChar() == 'w') {
-            barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
+        if (e.getKeyChar() == 'w') {
+            //barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
+            if(state!=0){
+                state--;
+                if(state<10)state=10+pauseOptions.length-1;
+            }
         } if (e.getKeyChar() == 's') {
-            barA.setPosition(Math.min(1.0, barA.getPosition() + 0.01));
-        }*/
+            //barA.setPosition(Math.min(1.0, barA.getPosition() + 0.01));
+            if(state!=0){
+                state++;
+                if(state>10+pauseOptions.length-1)state=10;
+            }
+        }
         if (e.getKeyChar() == 'i') {
             barB.setPosition(Math.max(0.0, barB.getPosition() - 0.01));
         } else if (e.getKeyChar() == 'k') {
             barB.setPosition(Math.min(1.0, barB.getPosition() + 0.01));
         }
         if (e.getKeyChar() == 'y') {
-            Pong.getInstance().showMenu();
+            if(state==0)state = 10;
+            else state=0;
+        }
+        if(e.getKeyChar()=='x'){
+            switch(state){
+                case 10:state=0;break;
+                case 11:Pong.getInstance().showNewGame();break;
+                case 12:Pong.getInstance().showMenu();break;
+            }
         }
     }
 
@@ -166,6 +227,7 @@ public class GameSurface extends JPanel implements KeyListener {
 
         super.paintComponent(g);
         doDrawing(g);
+        updateElementsPosition();
     }
 
     public class Bar {
@@ -175,13 +237,13 @@ public class GameSurface extends JPanel implements KeyListener {
         private double sensitivity;
         public Velocity velocity;
 
-        public Bar(double initalY, int width, int height,int sensitivity) {
+        public Bar(double initalY, int width, int height, int sensitivity) {
             this.position = initalY;
             this.height = height;
             this.width = width;
-            this.velocity=new Velocity();
-            this.velocity.value=0;
-            this.sensitivity=sensitivity;
+            this.velocity = new Velocity();
+            this.velocity.value = 0;
+            this.sensitivity = sensitivity;
         }
 
 
@@ -201,23 +263,23 @@ public class GameSurface extends JPanel implements KeyListener {
             return width;
         }
 
-        public void updatePosition(){
-            position+=interpretVelocity();
-            position=Math.max(0,position);
-            position=Math.min(1.0,position);
+        public void updatePosition() {
+            position += interpretVelocity();
+            position = Math.max(0, position);
+            position = Math.min(1.0, position);
         }
 
-        private double interpretVelocity(){
-            if(Math.abs(velocity.value)<=2)return 0;
-            int sign=velocity.value<0? -1 : 1;
-            double vel=velocity.value;
-            double result=0.0;
-            if(vel>=-10 && vel<=10){
-                result=vel*vel;
-            }else{
-                 result=20*Math.abs(vel)-100.0;
+        private double interpretVelocity() {
+            if (Math.abs(velocity.value) <= 2) return 0;
+            int sign = velocity.value < 0 ? -1 : 1;
+            double vel = velocity.value;
+            double result = 0.0;
+            if (vel >= -10 && vel <= 10) {
+                result = vel * vel;
+            } else {
+                result = 20 * Math.abs(vel) - 100.0;
             }
-            return result*sign*sensitivity/300000;
+            return result * sign * sensitivity / 300000;
         }
     }
 

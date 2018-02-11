@@ -94,15 +94,13 @@ public class Pong extends JFrame implements Runnable {
         gameSurface = new GameSurface();
         getContentPane().add(gameSurface, "Game");
         cardLayout.show(getContentPane(), "Game");
-        removeKeyListener(menuSurface);
-        addKeyListener(gameSurface);
+        updateKeyListener(gameSurface);
     }
 
     public void showMenu() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
         cardLayout.show(getContentPane(), "Menu");
-        removeKeyListener(gameSurface);
-        addKeyListener(menuSurface);
+        updateKeyListener(menuSurface);
     }
 
     public void showSettings() {
@@ -112,8 +110,14 @@ public class Pong extends JFrame implements Runnable {
         }
         getContentPane().add(settingsSurface, "Settings");
         cardLayout.show(getContentPane(), "Settings");
-        removeKeyListener(menuSurface);
-        addKeyListener(settingsSurface);
+        updateKeyListener(settingsSurface);
+    }
+
+    private void updateKeyListener(KeyListener panel){
+        for(KeyListener keyListener : getKeyListeners()){
+            removeKeyListener(keyListener);
+        }
+        addKeyListener(panel);
     }
 
     @Override
