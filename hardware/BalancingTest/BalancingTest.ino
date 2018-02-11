@@ -121,13 +121,13 @@ void setup()
 long int cpt=0;
 // Main loop, read and display data
 bool blocked=false;
-int block_time=0;
+unsigned long block_time=0;
 void loop()
 {
   if (Serial.available() > 0) {
     // read the incoming byte:
     int incomingByte = Serial.read();
-    Serial.print("I received: ");
+    Serial.print("rec: ");
     Serial.println(incomingByte, DEC);
     if(incomingByte==48 || incomingByte==49){blocked=true;block_time=millis();}
     if(incomingByte==48){analogWrite(R,210);analogWrite(G,255);analogWrite(B,255);}
