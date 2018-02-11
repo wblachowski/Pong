@@ -106,11 +106,20 @@ public class TwoWaySerialComm {
                                 System.out.println(ex.getMessage());
                             }
                         }
+                        checkForButtons(temp);
                         temp = "";
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        public void checkForButtons(String buffer){
+            for(int i=0;i<buffer.length();i++){
+                if(Character.isLetter(buffer.charAt(i))){
+                    Pong.getInstance().controllerButtonClicked(Character.toLowerCase(buffer.charAt(i)));
+                }
             }
         }
     }

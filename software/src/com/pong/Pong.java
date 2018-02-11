@@ -1,6 +1,8 @@
 package com.pong;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -138,6 +140,13 @@ public class Pong extends JFrame implements Runnable {
             }
 
             beforeTime = System.currentTimeMillis();
+        }
+    }
+
+    public void controllerButtonClicked(char keyChar){
+        KeyEvent key = new KeyEvent(this, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, keyChar);
+        for(KeyListener keyListener: getKeyListeners()){
+            keyListener.keyPressed(key);
         }
     }
 
