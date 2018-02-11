@@ -22,6 +22,12 @@ public class Pong extends JFrame implements Runnable {
     TwoWaySerialComm connectionA;
     TwoWaySerialComm connectionB;
 
+    //settings
+    int pointsToWin=10;
+    int sensitivityA=5;
+    int sensitivityB=5;
+    //end of settings
+
     public static Pong getInstance() {
         if (instance == null) {
             instance = new Pong();
@@ -37,7 +43,7 @@ public class Pong extends JFrame implements Runnable {
             @Override
             public void run() {
                 Pong pong = Pong.getInstance();
-                pong.initConnection();
+               // pong.initConnection();
                 pong.initUI();
                 pong.setVisible(true);
             }
@@ -152,6 +158,24 @@ public class Pong extends JFrame implements Runnable {
         for(KeyListener keyListener: getKeyListeners()){
             keyListener.keyPressed(key);
         }
+    }
+
+    public int getPointsToWin(){
+        return pointsToWin;
+    }
+
+    public int getSensitivityA(){
+        return sensitivityA;
+    }
+
+    public int getSensitivityB(){
+        return sensitivityB;
+    }
+
+    public void setSettings(int pointsToWin,int sensitivityA,int sensitivityB){
+        this.pointsToWin=pointsToWin;
+        this.sensitivityA=sensitivityA;
+        this.sensitivityB=sensitivityB;
     }
 
     public TwoWaySerialComm getConnectionA() {

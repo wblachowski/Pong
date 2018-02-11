@@ -15,7 +15,13 @@ public class SettingsSurface extends JPanel implements KeyListener {
 
     String title="Settings";
     String options[]={"Points to win","Sensivity A","Sensivity B"};
-    String values[]={"10","5","5"};
+    String values[];
+
+    public SettingsSurface(){
+        values=new String[]{Integer.toString(Pong.getInstance().getPointsToWin()),
+                Integer.toString(Pong.getInstance().getSensitivityA()),
+                Integer.toString(Pong.getInstance().getSensitivityB())};
+    }
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -75,6 +81,8 @@ public class SettingsSurface extends JPanel implements KeyListener {
         if(state==-1)state=options.length-1;
         if(values[state].equals("0"))values[state]="1";
         if(values[state].equals("11"))values[state]="10";
+
+        Pong.getInstance().setSettings(Integer.parseInt(values[0]),Integer.parseInt(values[1]),Integer.parseInt(values[2]));
     }
 
     @Override

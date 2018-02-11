@@ -18,15 +18,17 @@ public class GameSurface extends JPanel implements KeyListener {
 
     static int SENSITIVITY = 5;
 
-    private int state = 0; //0-playing
+    private int state = 0; //0-playing, 10-19 pause, 20-29 end of game
     Bar barA;
     Bar barB;
     Ball ball;
     private int scoreA;
     private int scoreB;
 
-    String pauseTitle="Game paused";
-    String pauseOptions[]={"Resume","New game","Exit"};
+    String pauseTitle = "Game paused";
+    String pauseOptions[] = {"Resume", "New game", "Exit"};
+    String endTitle="";
+    String endOptions[] = {"New game", "Exit"};
 
     public GameSurface() {
         barA = new Bar(0.5, 20, 80, SENSITIVITY);
@@ -52,8 +54,10 @@ public class GameSurface extends JPanel implements KeyListener {
         drawScore(g2d);
         drawSeparator(g2d);
 
-        if (state != 0) {
-            drawPauseMenu(g2d);
+        if (state >= 10 && state<20) {
+            drawMenu(g2d, pauseTitle, pauseOptions);
+        } else if (state >=20 && state<30) {
+            drawMenu(g2d,endTitle,endOptions);
         }
     }
 
@@ -62,6 +66,13 @@ public class GameSurface extends JPanel implements KeyListener {
             barA.updatePosition();
             barB.updatePosition();
             ball.updatePosition();
+        }
+    }
+
+    private void checkForWinner(){
+        if(state==0 && Math.max(scoreA,scoreB)>= Pong.getInstance().getPointsToWin()){
+            state=20;
+            endTitle="Player " + (scoreA>scoreB? "1" : "2") + " won!";
         }
     }
 
@@ -154,8 +165,8 @@ public class GameSurface extends JPanel implements KeyListener {
         g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
     }
 
-    private void drawPauseMenu(Graphics2D g2d) {
-        Color blackWithOpacity = new Color(0, 0, 0, 0.9f);
+    private void drawMenu(Graphics2D g2d, String title, String[] options) {
+        Color blackWithOpacity = new Color(0, 0, 0, 0.85f);
         g2d.setColor(blackWithOpacity);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
@@ -163,10 +174,10 @@ public class GameSurface extends JPanel implements KeyListener {
         Font font = new Font("arial", Font.BOLD, 50);
         g2d.setFont(font);
         g2d.setColor(Color.white);
-        g2d.drawString(pauseTitle, getWidth() / 2 - (int) font.getStringBounds(pauseTitle, frc).getWidth() / 2, 100);
+        g2d.drawString(title, getWidth() / 2 - (int) font.getStringBounds(pauseTitle, frc).getWidth() / 2, 100);
 
-        for (int i = 0; i < pauseOptions.length; i++) {
-            if (state-10 == i) {
+        for (int i = 0; i < options.length; i++) {
+            if (state % 10 == i) {
                 font = new Font("arial", Font.BOLD, 38);
                 g2d.setColor(Color.yellow);
             } else {
@@ -174,10 +185,11 @@ public class GameSurface extends JPanel implements KeyListener {
                 g2d.setColor(Color.white);
             }
             g2d.setFont(font);
-            Rectangle2D stringBounds = font.getStringBounds(pauseOptions[i], frc);
-            g2d.drawString(pauseOptions[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
+            Rectangle2D stringBounds = font.getStringBounds(options[i], frc);
+            g2d.drawString(options[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
         }
     }
+
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -186,17 +198,21 @@ public class GameSurface extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        int curState=state;
         if (e.getKeyChar() == 'w') {
             //barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
-            if(state!=0){
+            if (state != 0) {
                 state--;
-                if(state<10)state=10+pauseOptions.length-1;
+                if (curState>=10 && curState<20 && state < 10) state = 10 + pauseOptions.length - 1;
+                if (curState>=20 && curState<30 && state < 20) state = 20 + endOptions.length - 1;
             }
-        } if (e.getKeyChar() == 's') {
+        }
+        if (e.getKeyChar() == 's') {
             //barA.setPosition(Math.min(1.0, barA.getPosition() + 0.01));
-            if(state!=0){
+            if (state != 0) {
                 state++;
-                if(state>10+pauseOptions.length-1)state=10;
+                if (curState>=10 && curState<20 && state > 10 + pauseOptions.length - 1) state = 10;
+                if(curState>=20 && curState<30 && state>20+endOptions.length-1)state=20;
             }
         }
         if (e.getKeyChar() == 'i') {
@@ -205,14 +221,16 @@ public class GameSurface extends JPanel implements KeyListener {
             barB.setPosition(Math.min(1.0, barB.getPosition() + 0.01));
         }
         if (e.getKeyChar() == 'y') {
-            if(state==0)state = 10;
-            else state=0;
+            if (state == 0) state = 10;
+            else if (state >= 10 && state<20) state = 0;
         }
-        if(e.getKeyChar()=='x'){
-            switch(state){
-                case 10:state=0;break;
-                case 11:Pong.getInstance().showNewGame();break;
-                case 12:Pong.getInstance().showMenu();break;
+        if (e.getKeyChar() == 'x') {
+            if(state==10){
+                state=0;
+            }else if(state==11 || state==20){
+                Pong.getInstance().showNewGame();
+            }else if(state==12 || state==21){
+                Pong.getInstance().showMenu();
             }
         }
     }
@@ -228,6 +246,7 @@ public class GameSurface extends JPanel implements KeyListener {
         super.paintComponent(g);
         doDrawing(g);
         updateElementsPosition();
+        checkForWinner();
     }
 
     public class Bar {
