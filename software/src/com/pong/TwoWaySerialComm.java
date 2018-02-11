@@ -8,6 +8,7 @@ import jdk.internal.util.xml.impl.Input;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 
 public class TwoWaySerialComm {
@@ -30,12 +31,12 @@ public class TwoWaySerialComm {
         }
     }
 
-    void connect(String incomingPort, String outcomingPort) throws Exception {
+    void connect(String port) throws Exception {
         //INCOMING
 
         for (Enumeration<CommPortIdentifier> e = CommPortIdentifier.getPortIdentifiers(); e.hasMoreElements(); )
             System.out.println(e.nextElement().getName());
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(incomingPort);
+        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(port);
         if (portIdentifier.isCurrentlyOwned()) {
             System.out.println("Error: Incoming port is currently in use");
         } else {
@@ -44,29 +45,15 @@ public class TwoWaySerialComm {
                 SerialPort serialPort = (SerialPort) commPort;
                 serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
                 InputStream in = serialPort.getInputStream();
+                OutputStream out = serialPort.getOutputStream();
                 reader = new SerialReader(in, velocity);
+                writer = new SerialWriter(out);
                 //start reader thread
                 new Thread(reader).start();
             } else {
                 System.out.println("Error: Only serial ports are handled by this example.");
             }
         }
-        //OUTCOMING
-        /*
-        CommPortIdentifier portIdentifierOut = CommPortIdentifier.getPortIdentifier(outcomingPort);
-        if (portIdentifierOut.isCurrentlyOwned()) {
-            System.out.println("Error: Incoming port is currently in use");
-        } else {
-            CommPort commPort = portIdentifierOut.open(this.getClass().getName(), 2000);
-            if (commPort instanceof SerialPort) {
-                SerialPort serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-                OutputStream out = serialPort.getOutputStream();
-                writer = new SerialWriter(out);
-            } else {
-                System.out.println("Error: Only serial ports are handled by this example.");
-            }
-        }*/
     }
 
     /** */
@@ -135,8 +122,8 @@ public class TwoWaySerialComm {
         public void write(int value) {
             try {
                 this.out.write(value);
-            } catch (IOException ex) {
-
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
         }
     }

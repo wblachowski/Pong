@@ -80,6 +80,8 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x <= 0 - ball.getSize()) {
             scoreB++;
+            if(Pong.getInstance().getConnectionA()!=null){Pong.getInstance().getConnectionA().write('0');}
+            if(Pong.getInstance().getConnectionB()!=null){Pong.getInstance().getConnectionB().write('1');}
             barA.setPosition(0.5);
             barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
@@ -98,6 +100,8 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x >= getWidth() + ball.getSize()) {
             scoreA++;
+            if(Pong.getInstance().getConnectionA()!=null){Pong.getInstance().getConnectionA().write('1');}
+            if(Pong.getInstance().getConnectionB()!=null){Pong.getInstance().getConnectionB().write('0');}
             barA.setPosition(0.5);
             barB.setPosition(0.5);
             ball = new Ball(ball.getSize());
@@ -198,9 +202,22 @@ public class GameSurface extends JPanel implements KeyListener {
         }
 
         public void updatePosition(){
-            if(velocity.value<-5 || velocity.value>5)position+=velocity.value*sensitivity/10000;
+            position+=interpretVelocity();
             position=Math.max(0,position);
             position=Math.min(1.0,position);
+        }
+
+        private double interpretVelocity(){
+            if(Math.abs(velocity.value)<=2)return 0;
+            int sign=velocity.value<0? -1 : 1;
+            double vel=velocity.value;
+            double result=0.0;
+            if(vel>=-10 && vel<=10){
+                result=vel*vel;
+            }else{
+                 result=20*Math.abs(vel)-100.0;
+            }
+            return result*sign*sensitivity/300000;
         }
     }
 

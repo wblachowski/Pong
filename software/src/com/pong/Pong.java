@@ -77,13 +77,13 @@ public class Pong extends JFrame implements Runnable {
     private void initConnection() {
         try {
             connectionA = new TwoWaySerialComm();
-            connectionA.connect("COM5", "COM6");
+            connectionA.connect("COM5");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
         try {
             connectionB = new TwoWaySerialComm();
-            connectionB.connect("COM3", "COM4");
+            connectionB.connect("COM3");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
