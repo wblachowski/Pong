@@ -29,7 +29,8 @@ public class GameSurface extends JPanel implements KeyListener {
         ball = new Ball(20);
         scoreA = 0;
         scoreB = 0;
-        Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
+        if(Pong.getInstance().getConnectionA()!=null)Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
+        if(Pong.getInstance().getConnectionB()!=null)Pong.getInstance().getConnectionB().setVelocity(barB.velocity);
     }
 
 
@@ -53,6 +54,7 @@ public class GameSurface extends JPanel implements KeyListener {
         g2d.fillRect(getWidth() - barB.getWidth() - 20, (int) (barB.getPosition() * ((double) getHeight() - barB.getHeight())), barB.getWidth(), barB.getHeight());
 
         barA.updatePosition();
+        barB.updatePosition();
     }
 
     private void drawBall(Graphics2D g2d) {

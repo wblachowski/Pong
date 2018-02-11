@@ -8,6 +8,7 @@ import jdk.internal.util.xml.impl.Input;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
 
 public class TwoWaySerialComm {
     GameSurface.Velocity velocity;
@@ -20,7 +21,7 @@ public class TwoWaySerialComm {
 
     public void setVelocity(GameSurface.Velocity velocity) {
         this.velocity = velocity;
-        reader.setVelocity(velocity);
+        if(reader!=null)reader.setVelocity(velocity);
     }
 
     public void write(int value) {
@@ -31,6 +32,9 @@ public class TwoWaySerialComm {
 
     void connect(String incomingPort, String outcomingPort) throws Exception {
         //INCOMING
+
+        for (Enumeration<CommPortIdentifier> e = CommPortIdentifier.getPortIdentifiers(); e.hasMoreElements(); )
+            System.out.println(e.nextElement().getName());
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(incomingPort);
         if (portIdentifier.isCurrentlyOwned()) {
             System.out.println("Error: Incoming port is currently in use");
@@ -48,6 +52,7 @@ public class TwoWaySerialComm {
             }
         }
         //OUTCOMING
+        /*
         CommPortIdentifier portIdentifierOut = CommPortIdentifier.getPortIdentifier(outcomingPort);
         if (portIdentifierOut.isCurrentlyOwned()) {
             System.out.println("Error: Incoming port is currently in use");
@@ -61,7 +66,7 @@ public class TwoWaySerialComm {
             } else {
                 System.out.println("Error: Only serial ports are handled by this example.");
             }
-        }
+        }*/
     }
 
     /** */
@@ -76,7 +81,7 @@ public class TwoWaySerialComm {
 
         public void setVelocity(GameSurface.Velocity velocity) {
             this.velocity = velocity;
-            velocity.value=1;
+            velocity.value = 1;
         }
 
         public void run() {

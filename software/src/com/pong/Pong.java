@@ -5,9 +5,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import com.pong.TwoWaySerialComm;
 
-public class Pong extends JFrame implements Runnable{
+public class Pong extends JFrame implements Runnable {
 
     private static Pong instance;
     Thread animator;
@@ -19,9 +20,9 @@ public class Pong extends JFrame implements Runnable{
     TwoWaySerialComm connectionA;
     TwoWaySerialComm connectionB;
 
-    public static Pong getInstance(){
-        if(instance==null){
-            instance=new Pong();
+    public static Pong getInstance() {
+        if (instance == null) {
+            instance = new Pong();
         }
         return instance;
     }
@@ -52,7 +53,7 @@ public class Pong extends JFrame implements Runnable{
         menuSurface = new MenuSurface();
         addKeyListener(menuSurface);
 
-        contentPane.add(menuSurface,"Menu");
+        contentPane.add(menuSurface, "Menu");
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.first(contentPane);
 
@@ -64,47 +65,51 @@ public class Pong extends JFrame implements Runnable{
 
         setContentPane(contentPane);
         setTitle("Pong");
-        setSize(width,height);
+        setSize(width, height);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         animator = new Thread(this);
         animator.start();
     }
 
-    private void initConnection(){
+    private void initConnection() {
         try {
             connectionA = new TwoWaySerialComm();
             connectionA.connect("COM5", "COM6");
-            //connectionB = new TwoWaySerialComm();
-            //connectionB.connect("COM3", "COM4");
-        }catch(Exception ex){
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        try {
+            connectionB = new TwoWaySerialComm();
+            connectionB.connect("COM3", "COM4");
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    public void showNewGame(){
+    public void showNewGame() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
-        gameSurface=new GameSurface();
-        getContentPane().add(gameSurface,"Game");
-        cardLayout.show(getContentPane(),"Game");
+        gameSurface = new GameSurface();
+        getContentPane().add(gameSurface, "Game");
+        cardLayout.show(getContentPane(), "Game");
         removeKeyListener(menuSurface);
         addKeyListener(gameSurface);
     }
 
-    public void showMenu(){
+    public void showMenu() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
-        cardLayout.show(getContentPane(),"Menu");
+        cardLayout.show(getContentPane(), "Menu");
         removeKeyListener(gameSurface);
         addKeyListener(menuSurface);
     }
 
-    public void showSettings(){
+    public void showSettings() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
-        if(settingsSurface==null){
-            settingsSurface=new SettingsSurface();
+        if (settingsSurface == null) {
+            settingsSurface = new SettingsSurface();
         }
-        getContentPane().add(settingsSurface,"Settings");
-        cardLayout.show(getContentPane(),"Settings");
+        getContentPane().add(settingsSurface, "Settings");
+        cardLayout.show(getContentPane(), "Settings");
         removeKeyListener(menuSurface);
         addKeyListener(settingsSurface);
     }
@@ -136,7 +141,7 @@ public class Pong extends JFrame implements Runnable{
         }
     }
 
-    public TwoWaySerialComm getConnectionA(){
+    public TwoWaySerialComm getConnectionA() {
         return connectionA;
     }
 
