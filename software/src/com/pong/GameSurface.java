@@ -291,11 +291,16 @@ public class GameSurface extends JPanel implements KeyListener {
         private double interpretVelocity() {
             double value=velocity.value;
             int sign = value <0 ? -1 : 1;
-            double result=0.0;
+            double result;
             if(Math.abs(velocity.value)<=20){
                 result = -1.0*Math.pow(Math.cos(value/20),2)+1.0;
             }else{
-                result=(Math.sin(2)/20)*sign*value - Math.pow(Math.cos(1),2)+1-Math.sin(2);
+                result=0.0454648713412840847*sign*value - 1.2919265817264289-0.90929742682568169;
+                /*
+                0.0454648713412840847 ~ sin(2)/20
+                1.2919265817264289 ~ cos(1)^2 + 1
+                0.90929742682568169 ~ sin(2)
+                */
             }
             return result*sign*sensitivity/750.0;
         }

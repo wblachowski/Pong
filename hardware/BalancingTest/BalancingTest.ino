@@ -77,7 +77,6 @@ void readButtons(){
   }
 }
 
-float initAngle=0;
 // Initializations
 int B=9;
 int G=10;
@@ -90,7 +89,7 @@ void setup()
   //19200 standalone atmega328p
   //9600 arduino
   // Configure gyroscope range
-  I2CwriteByte(MPU9250_ADDRESS,27,GYRO_FULL_SCALE_250_DPS);
+  I2CwriteByte(MPU9250_ADDRESS,27,GYRO_FULL_SCALE_2000_DPS);
   // Configure accelerometers range
   I2CwriteByte(MPU9250_ADDRESS,28,ACC_FULL_SCALE_2_G);
   // Set by pass mode for the magnetometers
@@ -100,13 +99,6 @@ void setup()
   I2CwriteByte(MAG_ADDRESS,0x0A,0x01);
   angle=0.0;
   //enabled?
-  int sumAngle=0;
-  delay(100);
-  for(int i=0;i<100;i++){
-    sumAngle+=readAngle();
-    delay(1);
-  }
-  initAngle = sumAngle/100;
   for(int i=0;i<(sizeof(buttons)/sizeof(*buttons));i++){
     pinMode(buttons[i],INPUT);
   }
@@ -138,5 +130,5 @@ void loop()
   if(!blocked)analogWrite(B,max(0,255-abs(angle)));
 
   readButtons();
-  delay(10);    
+  delay(5);    
 }
