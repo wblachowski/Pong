@@ -81,11 +81,11 @@ public class TwoWaySerialComm {
                         temp += new String(buffer, 0, len);
 
                     } else {
-                        System.out.println("." + temp + ".");
+                        //System.out.println("." + temp + ".");
                         String[] parts = temp.split("\r\n");
                         if (parts.length > 2) {
                             try {
-                                System.out.println("'" + parts[parts.length - 2] + "'");
+                                //System.out.println("'" + parts[parts.length - 2] + "'");
                                 if (velocity != null) {
                                     velocity.value = -1 * Integer.parseInt(parts[parts.length - 2]);
                                 }
