@@ -97,7 +97,6 @@ void setup()
   
   // Request first magnetometer single measurement
   I2CwriteByte(MAG_ADDRESS,0x0A,0x01);
-  angle=0.0;
   //enabled?
   for(int i=0;i<(sizeof(buttons)/sizeof(*buttons));i++){
     pinMode(buttons[i],INPUT);
@@ -109,8 +108,6 @@ void setup()
   analogWrite(G,255);
 }
 
-
-long int cpt=0;
 // Main loop, read and display data
 bool blocked=false;
 unsigned long block_time=0;
