@@ -127,7 +127,7 @@ void loop()
   }
   Serial.println((int)readAngle());
   if(blocked && millis()-block_time>500){blocked=false;analogWrite(R,255);analogWrite(G,255);}
-  if(!blocked)analogWrite(B,max(0,255-abs(angle)));
+  if(!blocked)analogWrite(B,max(0,255-abs(angle)/6));
 
   readButtons();
   delay(5);    

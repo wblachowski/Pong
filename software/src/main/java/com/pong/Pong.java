@@ -15,6 +15,7 @@ public class Pong extends JFrame implements Runnable {
     private static Pong instance;
     Thread animator;
 
+    InitialSurface initialSurface;
     MenuSurface menuSurface;
     GameSurface gameSurface;
     SettingsSurface settingsSurface;
@@ -43,9 +44,9 @@ public class Pong extends JFrame implements Runnable {
             @Override
             public void run() {
                 Pong pong = Pong.getInstance();
-                pong.initConnection();
                 pong.initUI();
                 pong.setVisible(true);
+                pong.initConnection();
             }
         });
     }
@@ -57,11 +58,9 @@ public class Pong extends JFrame implements Runnable {
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new CardLayout());
 
+        initialSurface = new InitialSurface();
+        contentPane.add(initialSurface,"Initial");
 
-        menuSurface = new MenuSurface();
-        addKeyListener(menuSurface);
-
-        contentPane.add(menuSurface, "Menu");
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.first(contentPane);
 
@@ -81,18 +80,28 @@ public class Pong extends JFrame implements Runnable {
     }
 
     private void initConnection() {
-        try {
-            connectionA = new TwoWaySerialComm();
-            connectionA.connect("COM5");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        try {
-            connectionB = new TwoWaySerialComm();
-            connectionB.connect("COM3");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connectionA = new TwoWaySerialComm();
+                    connectionA.connect("COM5");
+                    initialSurface.setFirstState(1);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    initialSurface.setFirstState(2);
+                }
+                initialSurface.setSecondState(0);
+                try {
+                    connectionB = new TwoWaySerialComm();
+                    connectionB.connect("COM8");
+                    initialSurface.setSecondState(1);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    initialSurface.setSecondState(2);
+                }
+            }
+        }).start();
     }
 
     public void showNewGame() {
@@ -105,6 +114,10 @@ public class Pong extends JFrame implements Runnable {
 
     public void showMenu() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
+        if(menuSurface == null){
+            menuSurface=new MenuSurface();
+            getContentPane().add(menuSurface,"Menu");
+        }
         cardLayout.show(getContentPane(), "Menu");
         updateKeyListener(menuSurface);
     }
@@ -113,8 +126,8 @@ public class Pong extends JFrame implements Runnable {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
         if (settingsSurface == null) {
             settingsSurface = new SettingsSurface();
+            getContentPane().add(settingsSurface, "Settings");
         }
-        getContentPane().add(settingsSurface, "Settings");
         cardLayout.show(getContentPane(), "Settings");
         updateKeyListener(settingsSurface);
     }
