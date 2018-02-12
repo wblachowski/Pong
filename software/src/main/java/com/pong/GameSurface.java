@@ -152,7 +152,7 @@ public class GameSurface extends JPanel implements KeyListener {
 
     private void drawScore(Graphics2D g2d) {
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        Font font = new Font("arial", Font.BOLD, 50);
+        Font font = new Font("helvetica", Font.BOLD, 50);
         g2d.setFont(font);
         g2d.setColor(Color.white);
         g2d.drawString(Integer.toString(scoreA), getWidth() / 2 - (int) font.getStringBounds(Integer.toString(scoreA), frc).getWidth() - 40, 70);
@@ -171,17 +171,17 @@ public class GameSurface extends JPanel implements KeyListener {
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        Font font = new Font("arial", Font.BOLD, 50);
+        Font font = new Font("helvetica", Font.BOLD, 50);
         g2d.setFont(font);
         g2d.setColor(Color.white);
         g2d.drawString(title, getWidth() / 2 - (int) font.getStringBounds(pauseTitle, frc).getWidth() / 2, 100);
 
         for (int i = 0; i < options.length; i++) {
             if (state % 10 == i) {
-                font = new Font("arial", Font.BOLD, 38);
+                font = new Font("helvetica", Font.BOLD, 38);
                 g2d.setColor(Color.yellow);
             } else {
-                font = new Font("arial", Font.BOLD, 35);
+                font = new Font("helvetica", Font.BOLD, 35);
                 g2d.setColor(Color.white);
             }
             g2d.setFont(font);

@@ -25,7 +25,7 @@ public class MenuSurface extends JPanel implements KeyListener {
         g.fillRect(0, 0, getWidth(), getHeight());
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        Font font = new Font("arial", Font.BOLD, 50);
+        Font font = new Font("helvetica", Font.BOLD, 50);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -33,10 +33,10 @@ public class MenuSurface extends JPanel implements KeyListener {
 
         for (int i = 0; i < options.length; i++) {
             if (state == i) {
-                font = new Font("arial", Font.BOLD, 38);
+                font = new Font("helvetica", Font.BOLD, 38);
                 g.setColor(Color.yellow);
             } else {
-                font = new Font("arial", Font.BOLD, 35);
+                font = new Font("helvetica", Font.BOLD, 35);
                 g.setColor(Color.white);
             }
             g.setFont(font);

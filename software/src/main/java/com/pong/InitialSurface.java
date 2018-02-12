@@ -35,7 +35,7 @@ public class InitialSurface extends JPanel {
         String firstText = "",secondText="";
         switch (firstState) {
             case 0:
-                firstUrl = "src/main/resources/spinnerblck.gif";
+                firstUrl = "src/main/resources/spinner.gif";
                 firstText = "Connect first controller";
                 break;
             case 1:
@@ -49,7 +49,7 @@ public class InitialSurface extends JPanel {
         }
         switch(secondState){
             case 0:
-                secondUrl = "src/main/resources/spinnerblck.gif";
+                secondUrl = "src/main/resources/spinner.gif";
                 secondText = "Connect second controller";
                 break;
             case 1:
@@ -66,7 +66,7 @@ public class InitialSurface extends JPanel {
         g.drawImage(icon, getWidth() / 4 - icon.getWidth(null) / 2, getHeight() / 2 - 100, this);
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        Font font = new Font("arial", Font.BOLD, 23);
+        Font font = new Font("helvetica", Font.BOLD, 23);
         g.setFont(font);
         g.setColor(Color.white);
         g.drawString(firstText, getWidth() / 4 - (int) font.getStringBounds(firstText, frc).getWidth() / 2, getHeight() / 2 + 50);
