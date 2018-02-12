@@ -19,6 +19,7 @@ public class GameSurface extends JPanel implements KeyListener {
     static int SENSITIVITY = 5;
 
     private int state = 0; //0-playing, 10-19 pause, 20-29 end of game
+    private long scoreTime;
     Bar barA;
     Bar barB;
     Ball ball;
@@ -27,7 +28,7 @@ public class GameSurface extends JPanel implements KeyListener {
 
     String pauseTitle = "Game paused";
     String pauseOptions[] = {"Resume", "New game", "Exit"};
-    String endTitle="";
+    String endTitle = "";
     String endOptions[] = {"New game", "Exit"};
 
     public GameSurface() {
@@ -38,6 +39,7 @@ public class GameSurface extends JPanel implements KeyListener {
         scoreB = 0;
         if (Pong.getInstance().getConnectionA() != null) Pong.getInstance().getConnectionA().setVelocity(barA.velocity);
         if (Pong.getInstance().getConnectionB() != null) Pong.getInstance().getConnectionB().setVelocity(barB.velocity);
+        scoreTime = System.currentTimeMillis();
     }
 
 
@@ -54,10 +56,10 @@ public class GameSurface extends JPanel implements KeyListener {
         drawScore(g2d);
         drawSeparator(g2d);
 
-        if (state >= 10 && state<20) {
+        if (state >= 10 && state < 20) {
             drawMenu(g2d, pauseTitle, pauseOptions);
-        } else if (state >=20 && state<30) {
-            drawMenu(g2d,endTitle,endOptions);
+        } else if (state >= 20 && state < 30) {
+            drawMenu(g2d, endTitle, endOptions);
         }
     }
 
@@ -65,14 +67,16 @@ public class GameSurface extends JPanel implements KeyListener {
         if (state == 0) {
             barA.updatePosition();
             barB.updatePosition();
-            ball.updatePosition();
+            if (System.currentTimeMillis() - scoreTime > 1000) {
+                ball.updatePosition();
+            }
         }
     }
 
-    private void checkForWinner(){
-        if(state==0 && Math.max(scoreA,scoreB)>= Pong.getInstance().getPointsToWin()){
-            state=20;
-            endTitle="Player " + (scoreA>scoreB? "1" : "2") + " won!";
+    private void checkForWinner() {
+        if (state == 0 && Math.max(scoreA, scoreB) >= Pong.getInstance().getPointsToWin()) {
+            state = 20;
+            endTitle = "Player " + (scoreA > scoreB ? "1" : "2") + " won!";
         }
     }
 
@@ -105,6 +109,7 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x <= 0 - ball.getSize()) {
             scoreB++;
+            scoreTime=System.currentTimeMillis();
             if (Pong.getInstance().getConnectionA() != null) {
                 Pong.getInstance().getConnectionA().write('0');
             }
@@ -129,6 +134,7 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (x >= getWidth() + ball.getSize()) {
             scoreA++;
+            scoreTime=System.currentTimeMillis();
             if (Pong.getInstance().getConnectionA() != null) {
                 Pong.getInstance().getConnectionA().write('1');
             }
@@ -198,21 +204,21 @@ public class GameSurface extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int curState=state;
+        int curState = state;
         if (e.getKeyChar() == 'w') {
             //barA.setPosition(Math.max(0.0, barA.getPosition() - 0.01));
             if (state != 0) {
                 state--;
-                if (curState>=10 && curState<20 && state < 10) state = 10 + pauseOptions.length - 1;
-                if (curState>=20 && curState<30 && state < 20) state = 20 + endOptions.length - 1;
+                if (curState >= 10 && curState < 20 && state < 10) state = 10 + pauseOptions.length - 1;
+                if (curState >= 20 && curState < 30 && state < 20) state = 20 + endOptions.length - 1;
             }
         }
         if (e.getKeyChar() == 's') {
             //barA.setPosition(Math.min(1.0, barA.getPosition() + 0.01));
             if (state != 0) {
                 state++;
-                if (curState>=10 && curState<20 && state > 10 + pauseOptions.length - 1) state = 10;
-                if(curState>=20 && curState<30 && state>20+endOptions.length-1)state=20;
+                if (curState >= 10 && curState < 20 && state > 10 + pauseOptions.length - 1) state = 10;
+                if (curState >= 20 && curState < 30 && state > 20 + endOptions.length - 1) state = 20;
             }
         }
         if (e.getKeyChar() == 'i') {
@@ -222,14 +228,14 @@ public class GameSurface extends JPanel implements KeyListener {
         }
         if (e.getKeyChar() == 'y') {
             if (state == 0) state = 10;
-            else if (state >= 10 && state<20) state = 0;
+            else if (state >= 10 && state < 20) state = 0;
         }
         if (e.getKeyChar() == 'x') {
-            if(state==10){
-                state=0;
-            }else if(state==11 || state==20){
+            if (state == 10) {
+                state = 0;
+            } else if (state == 11 || state == 20) {
                 Pong.getInstance().showNewGame();
-            }else if(state==12 || state==21){
+            } else if (state == 12 || state == 21) {
                 Pong.getInstance().showMenu();
             }
         }
@@ -289,15 +295,15 @@ public class GameSurface extends JPanel implements KeyListener {
         }
 
         private double interpretVelocity() {
-            double value=velocity.value;
-            int sign = value <0 ? -1 : 1;
-            double result=0.0;
-            if(Math.abs(velocity.value)<=20){
-                result = -1.0*Math.pow(Math.cos(value/20),2)+1.0;
-            }else{
-                result=(Math.sin(2)/20)*sign*value - Math.pow(Math.cos(1),2)+1-Math.sin(2);
+            double value = velocity.value;
+            int sign = value < 0 ? -1 : 1;
+            double result = 0.0;
+            if (Math.abs(velocity.value) <= 20) {
+                result = -1.0 * Math.pow(Math.cos(value / 20), 2) + 1.0;
+            } else {
+                result = (Math.sin(2) / 20) * sign * value - Math.pow(Math.cos(1), 2) + 1 - Math.sin(2);
             }
-            return result*sign*sensitivity/750.0;
+            return result * sign * sensitivity / 750.0;
         }
     }
 

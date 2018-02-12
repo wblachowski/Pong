@@ -49,9 +49,6 @@ public class SettingsSurface extends JPanel implements KeyListener {
             Rectangle2D stringBounds = font.getStringBounds(options[i]+"   "+values[i], frc);
             g.drawString(options[i]+"   "+values[i], (int) (getWidth() / 2 - stringBounds.getWidth() / 2), 200 + i * 60);
         }
-        Image icon = new ImageIcon("src/main/resources/spinner.gif").getImage();
-        g.drawImage(icon, 0, 0, this);
-
     }
 
     @Override
